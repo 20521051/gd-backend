@@ -1,0 +1,197 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Job {
+  Teacher
+  Doctor
+  Student
+  Other
+}
+
+enum Degree {
+  BSc // Cử nhân
+  Engineer // Kỹ sư
+  Master // Ths
+  Doctor // Ts
+  Reader // Phó giáo sư
+  Professor // Giáo sư
+}
+
+enum modelTypes {
+  course
+  video
+  blog
+}
+
+enum Gender {
+  male
+  female
+  other
+}
+
+model User {
+  id             String  @id @default(auto()) @map("_id") @db.ObjectId
+  username       String  @unique
+  password       String
+  email          String? @unique
+  name           String
+  gender         Gender
+  birthday       String?
+  job            Job
+  degree         Degree?
+  avatar         String? //lưu trên ipfs? cloudinary
+  wallet         String? @unique
+  address        String?
+  phone          String  @unique
+  numberOfFollow Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Course {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  owner          String
+  thumbnail      String // lưu trên ipfs? cloudinary
+  index          String // lưu các mục trong khóa học
+  rate           Float
+  price          Int
+  numberOfFollow Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([owner, name])
+}
+
+model Comment {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  owner     String
+  content   String
+  about     modelTypes
+  isHelpful Boolean    @default(true)
+  at        String // address that comment point to
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Index {
+  id    String   @id @default(auto()) @map("_id") @db.ObjectId
+  title String
+  video String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Video {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  time        Int // lưu thời lượng là giây
+  link        String // link to video
+  description String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  name      String?
+  thumbnail String // lưu trên ipfs? cloudinary
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// làm sao để hiển thị trên frontend và cần lưu những gì?
+model Blog {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  content   String
+  category  String[]
+  rate      Float
+  isHelpful Boolean  @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Exercise {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  title       String?
+  description String
+  file        String // link to file
+  for         String // address that exercise point to
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Notification {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  from      String @default("system")
+  to        String
+  content   String
+  thumbnail String
+  link      String // link of content
+
+  createdAt DateTime @default(now())
+
+  @@unique([from, to, content]) // No accept spam
+}
+
+model submit {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  owner      String
+  exerciseId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([owner, exerciseId])
+}
+
+model buyCourse {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId   String
+  courseId String[]
+  endTime  String // date
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, courseId])
+}
+
+model ratingCourse {
+  id     String     @id @default(auto()) @map("_id") @db.ObjectId
+  userId String
+  for    String
+  rate   Int
+  about  modelTypes
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, for])
+}
+
+model follow {
+  id            String     @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String
+  followAddress String
+  about         modelTypes
+  status        Boolean    @default(true) // Hủy follow thì set = faulse. Nếu quá 30 ngày hủy thì xóa
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@unique([userId, followAddress])
+}
