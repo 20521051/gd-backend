@@ -1,6 +1,6 @@
 import { Gender, Job } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, Matches, matches } from 'class-validator';
 
 export class CreateUserDTO {
   @ApiProperty({
@@ -15,6 +15,10 @@ export class CreateUserDTO {
   })
   @IsNotEmpty()
   @IsString()
+  @Matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/, {
+    message:
+      'Password must contain at least 1 letter, 1 number, 1 special character, and be at least 8 characters long',
+  })
   password: string;
 
   @ApiProperty({

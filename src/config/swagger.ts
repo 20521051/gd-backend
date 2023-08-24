@@ -17,7 +17,7 @@ export const SwaggerConfig = (app: INestApplication) => {
         type: 'http',
         in: 'Header',
       },
-      // 'access_token',
+      'access_token',
     )
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);

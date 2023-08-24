@@ -17,10 +17,10 @@ import { AccessTokenGuard } from '~/auth/guard';
   ],
   controllers: [AppController],
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: AccessTokenGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AccessTokenGuard,
+    // },
   ],
 })
 export class AppModule {}
