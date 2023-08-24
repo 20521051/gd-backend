@@ -37,19 +37,21 @@ enum Gender {
 
 model User {
   id             String  @id @default(auto()) @map("_id") @db.ObjectId
-  username       String  @unique
+  userName       String  @unique
   password       String
   email          String? @unique
   name           String
   gender         Gender
-  birthday       String?
+  birthday       String? @default("01/01/2000")
   job            Job
   degree         Degree?
   avatar         String? //lưu trên ipfs? cloudinary
   wallet         String? @unique
   address        String?
   phone          String  @unique
+  bank           String? 
   numberOfFollow Int     @default(0)
+  refreshToken   String  @default("test")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -1,12 +1,12 @@
-import { Degree, Gender } from '@/types';
+import { Degree, Gender } from '@prisma/client';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDateString, IsString } from 'class-validator';
+import { IsEmail, IsString } from 'class-validator';
 
 export class UpdateUserDTO {
   @ApiPropertyOptional({
     type: String,
   })
-  @IsString()
+  @IsEmail()
   email: string;
 
   @ApiPropertyOptional({
@@ -17,14 +17,12 @@ export class UpdateUserDTO {
 
   @ApiPropertyOptional({
     type: String,
-    enum: Gender,
   })
   @IsString()
   gender: Gender;
 
   @ApiPropertyOptional({
     type: String,
-    enum: Degree,
   })
   @IsString()
   degree: Degree;
@@ -32,7 +30,7 @@ export class UpdateUserDTO {
   @ApiPropertyOptional({
     type: String,
   })
-  @IsDateString()
+  @IsString()
   birthday: string;
 
   @ApiPropertyOptional({

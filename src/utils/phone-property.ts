@@ -1,4 +1,4 @@
-export const check_phone_number = (input: string): boolean => {
+export const check = (input: string): boolean => {
   if (input.length !== 10) {
     return false;
   }

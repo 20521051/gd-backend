@@ -1,4 +1,4 @@
-import { Gender, Job } from '@/types';
+import { Gender, Job } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 
@@ -8,7 +8,7 @@ export class CreateUserDTO {
   })
   @IsNotEmpty()
   @IsString()
-  username: string;
+  userName: string;
 
   @ApiProperty({
     type: String,
@@ -26,7 +26,6 @@ export class CreateUserDTO {
 
   @ApiProperty({
     type: String,
-    enum: Gender,
   })
   @IsNotEmpty()
   @IsString()
@@ -36,18 +35,20 @@ export class CreateUserDTO {
     type: String,
   })
   @IsNotEmpty()
+  @IsString()
   birthday: string;
 
   @ApiProperty({
     type: String,
-    enum: Job,
   })
   @IsNotEmpty()
+  @IsString()
   job: Job;
 
   @ApiProperty({
     type: String,
   })
   @IsNotEmpty()
+  @IsString()
   phone: string;
 }

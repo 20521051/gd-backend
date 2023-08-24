@@ -1,4 +1,4 @@
-export const check_date = (input: string): boolean => {
+export const check = (input: string): boolean => {
   if (input.length < 8) {
     /* ex: 1/1/2002 have at least 8 characters */
     return false;
@@ -29,7 +29,7 @@ export const check_date = (input: string): boolean => {
   return true;
 };
 
-export const format_date = (input: string): string => {
+export const format = (input: string): string => {
   const parts = input.split('/');
   const day = parseInt(parts[0], 10);
   const month = parseInt(parts[1], 10);

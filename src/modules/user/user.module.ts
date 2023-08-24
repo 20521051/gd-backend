@@ -1,13 +1,10 @@
-import { PrismaService } from '@/prisma.service';
+import { PrismaService } from '~/prisma';
 import { Module } from '@nestjs/common';
-import { UserService } from './services';
-import { UserController } from './controller/user.controller';
+import { UserService } from '~/user/service';
+import { UserController } from '~/user/controller';
 
 @Module({
-  imports: [
-    // MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-    // MongooseModule.forFeature([{ name: Address.name, schema: AddressSchema }]),
-  ],
+  imports: [],
   controllers: [UserController],
   providers: [PrismaService, UserService],
   exports: [UserService],

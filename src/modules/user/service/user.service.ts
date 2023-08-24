@@ -1,6 +1,6 @@
 import { Injectable, HttpStatus } from '@nestjs/common';
-import { PrismaService } from '@/prisma.service';
-import { CreateUserDTO, UpdateUserDTO } from '../dto';
+import { PrismaService } from '~/prisma';
+import { CreateUserDTO, UpdateUserDTO, UpdatePasswordUserDTO } from '~/user/dto';
 import {
   ERROR_CREATE_USER,
   ERROR_USER_ALREADY_EXIST,
@@ -15,18 +15,8 @@ import {
   ERROR_PASSWORD_USER_UNSAFE,
   ERROR_IS_NOT_DATE_TIME,
   ERROR_IS_NOT_PHONE_NUMBER,
-} from '../constances';
-import { UpdatePasswordUserDTO } from '../dto/update-password-user.dto';
-import {
-  ResponseFailure,
-  check_date,
-  check_phone_number,
-  ResponseSuccess,
-  format_date,
-  check_password,
-  compare_password,
-  hash_password,
-} from '@/utils';
+} from '~/user/constances';
+import { DATE_TIME, PASSWORD, PHONE, ResponseFailure, ResponseSuccess, SHA256 } from '@/utils';
 
 @Injectable()
 export class UserService {
@@ -52,26 +42,26 @@ export class UserService {
   }
   async create(data: CreateUserDTO) {
     try {
-      const user = await this.prisma.user.findUnique({ where: { username: data.username } });
+      const user = await this.prisma.user.findUnique({ where: { userName: data.userName } });
       if (user) {
         return ResponseFailure({
           error: ERROR_USER_ALREADY_EXIST,
           statusCode: HttpStatus.CONFLICT,
         });
       }
-      if (!check_password(data.password)) {
+      if (!PASSWORD.check(data.password)) {
         return ResponseFailure({
           error: ERROR_PASSWORD_USER_UNSAFE,
           statusCode: HttpStatus.CONFLICT,
         });
       }
-      if (!check_date(data.birthday)) {
+      if (!DATE_TIME.check(data.birthday)) {
         return ResponseFailure({
           error: ERROR_IS_NOT_DATE_TIME,
           statusCode: HttpStatus.CONFLICT,
         });
       }
-      if (!check_phone_number(data.phone)) {
+      if (!PHONE.check(data.phone)) {
         return ResponseFailure({
           error: ERROR_IS_NOT_PHONE_NUMBER,
           statusCode: HttpStatus.CONFLICT,
@@ -80,11 +70,11 @@ export class UserService {
       return ResponseSuccess({
         data: await this.prisma.user.create({
           data: {
-            username: data.username,
-            password: hash_password(data.password),
+            userName: data.userName,
+            password: SHA256.hash(data.password),
             name: data.name,
             gender: data.gender,
-            birthday: format_date(data.birthday),
+            birthday: DATE_TIME.format(data.birthday),
             job: data.job,
             phone: data.phone,
           },
@@ -99,6 +89,7 @@ export class UserService {
       });
     }
   }
+
   async update(data: UpdateUserDTO, id: string) {
     try {
       const user = await this.prisma.user.findUnique({ where: { id } });
@@ -133,14 +124,14 @@ export class UserService {
         });
       }
 
-      if (compare_password(data.password, user.password)) {
+      if (SHA256.verify(data.password, user.password)) {
         return ResponseFailure({
           error: ERROR_PASSWORD_USER_INCORRECT,
           statusCode: HttpStatus.BAD_REQUEST,
         });
       }
 
-      if (!check_password(user.password)) {
+      if (!PASSWORD.check(user.password)) {
         return ResponseFailure({
           error: ERROR_PASSWORD_USER_UNSAFE,
           statusCode: HttpStatus.BAD_REQUEST,
@@ -155,7 +146,7 @@ export class UserService {
       }
 
       return ResponseSuccess({
-        data: await this.prisma.user.update({ where: { id }, data: { password: hash_password(data.newPassword) } }),
+        data: await this.prisma.user.update({ where: { id }, data: { password: SHA256.hash(data.newPassword) } }),
         message: CHANGE_PASSWORD_USER_SUCCESS,
       });
     } catch (error) {
