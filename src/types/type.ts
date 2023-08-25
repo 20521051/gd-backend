@@ -5,7 +5,10 @@ export type Tokens = {
 
 export type JwtPayload = {
   id: string;
-  userName: string;
+  userName?: string;
+  email?: string;
+  phone?: string;
+  wallet?: string;
 };
 
 export type JwtPayloadWithRefreshToken = JwtPayload & { refreshToken: string };

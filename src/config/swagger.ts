@@ -8,6 +8,7 @@ export const SwaggerConfig = (app: INestApplication) => {
     .setTitle('E-learning website verify certificates using blockchain API Document')
     .setDescription('Description of E-learning website verify certificates using blockchain')
     .addServer(config.get('SWAGGER_API_SERVER'))
+    .setVersion('1.0')
     .addBearerAuth(
       {
         description: `[just text field] Please enter token in following format: Bearer <JWT>`,

@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { JwtPayload, Tokens } from '@/types';
 import { AuthDTO } from '../dto';
-import { ResponseFailure, ResponseSuccess, SHA256 } from '@/utils';
+import { ResponseFailure, ResponseSuccess, BCRYPT } from '@/utils';
 import { UserService } from '~/user/service';
 import { CreateUserDTO } from '~/user/dto';
 
@@ -17,14 +17,20 @@ export class AuthService {
     private userService: UserService,
   ) {}
 
-  async generateTokens(userId: string, userName: string): Promise<Tokens> {
+  async generateTokens(payload: {
+    id: string;
+    userName?: string;
+    email?: string;
+    phone?: string;
+    wallet?: string;
+  }): Promise<Tokens> {
     const jwtPayload: JwtPayload = {
-      id: userId,
-      userName: userName,
+      id: payload.id,
+      userName: payload.userName || 'none',
+      email: payload.email || 'none',
+      phone: payload.phone || 'none',
+      wallet: payload.wallet || 'none',
     };
-
-    console.log(this.config.get<string>('REFRESH_TOKEN_SECRET_KEY'));
-    console.log(this.config.get<string>('ACCESS_TOKEN_SECRET_KEY'));
 
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(jwtPayload, {
@@ -44,7 +50,7 @@ export class AuthService {
   }
 
   async updateRefreshToken(userId: string, refreshToken: string): Promise<void> {
-    const hash = SHA256.hash(refreshToken);
+    const hash = BCRYPT.hash(refreshToken);
     await this.prisma.user.update({
       where: {
         id: userId,
@@ -68,13 +74,19 @@ export class AuthService {
           statusCode: HttpStatus.BAD_REQUEST,
         });
       }
-      if (!user.refreshToken || !(user.refreshToken === SHA256.hash(refreshToken))) {
+      if (!user.refreshToken || !(user.refreshToken === BCRYPT.hash(refreshToken))) {
         return ResponseFailure({
           error: 'ERROR_ACCESS_DENIED',
           statusCode: HttpStatus.BAD_REQUEST,
         });
       }
-      const tokens = await this.generateTokens(user.id, user.userName);
+      const tokens = await this.generateTokens({
+        id: user.id,
+        userName: user.userName,
+        email: user.email,
+        phone: user.phone,
+        wallet: user.wallet,
+      });
       await this.updateRefreshToken(user.id, tokens.refreshToken);
 
       return ResponseSuccess({
@@ -92,13 +104,7 @@ export class AuthService {
 
   async signUp(data: CreateUserDTO) {
     try {
-      const user = await this.userService.create(data);
-      // if (!user) {
-      //   return ResponseFailure({
-      //     error: 'ERROR_SIGN_UP',
-      //     statusCode: HttpStatus.BAD_REQUEST,
-      //   });
-      // }
+      await this.userService.create(data);
       return ResponseSuccess({
         data: data,
         message: 'SIGN_UP_SUCCESS',
@@ -112,14 +118,14 @@ export class AuthService {
     }
   }
 
-  // async signIn(dto: AuthDTO, rememberMe = false) {
   async signIn(dto: AuthDTO) {
     try {
-      const user = await this.prisma.user.findUnique({
+      const user = await this.prisma.user.findMany({
         where: {
-          userName: dto.userName,
+          OR: [{ userName: dto.userName }, { email: dto.email }, { phone: dto.phone }, { wallet: dto.wallet }],
         },
       });
+      const index = (dto.email && 1) || (dto.phone && 2) || (dto.wallet && 3) || 0;
       if (!user) {
         return ResponseFailure({
           error: 'ERROR_USER_NOT_FOUND',
@@ -127,15 +133,20 @@ export class AuthService {
         });
       }
 
-      if (!SHA256.verify(dto.password, user.password)) {
+      if (!BCRYPT.verify({ password: dto.password, hash: user[index].password })) {
         return ResponseFailure({
           error: 'ERROR_PASSWORD_USER_INCORRECT',
           statusCode: HttpStatus.BAD_REQUEST,
         });
       }
-      //jhdfjkasjkfd
-      const tokens = await this.generateTokens(user.id, user.userName);
-      await this.updateRefreshToken(user.id, tokens.refreshToken);
+      const tokens = await this.generateTokens({
+        id: user[index].id,
+        userName: user[index].userName,
+        email: user[index].email,
+        phone: user[index].phone,
+        wallet: user[index].wallet,
+      });
+      await this.updateRefreshToken(user[index].id, tokens.refreshToken);
 
       return ResponseSuccess({
         data: tokens,

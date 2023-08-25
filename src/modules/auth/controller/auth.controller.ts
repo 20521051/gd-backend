@@ -1,5 +1,5 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { AuthService } from '../service/auth.service';
+import { AuthService } from '../service';
 import { CreateUserDTO } from '~/user';
 import { AuthDTO } from '../dto';
 import { ApiTags } from '@nestjs/swagger';
@@ -21,13 +21,13 @@ export class AuthController {
     return this.authService.signIn(dto);
   }
 
-  @Post('/logout')
+  @Post('/log-out')
   logOut(@GetCurrentUserId() userId: string) {
     return this.authService.logOut(userId);
   }
 
   @UseGuards(RefreshTokenGuard)
-  @Post('refresh-token')
+  @Post('/refresh-token')
   refreshTokens(@GetCurrentUserId() userId: string, @GetCurrentUser('refreshToken') refreshToken: string) {
     return this.authService.refreshTokens(userId, refreshToken);
   }

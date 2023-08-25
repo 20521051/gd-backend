@@ -6,8 +6,6 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('User')
 @Controller('user')
-@ApiBearerAuth('access-token')
-@UseGuards(AccessTokenGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -15,16 +13,21 @@ export class UserController {
   async getAll() {
     return this.userService.getAll();
   }
+
   @Get('/:id')
   async get(@Param('id') id: string) {
     return this.userService.get(id);
   }
 
+  @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth('access_token')
   @Put('/:id')
   async update(@Body() data: UpdateUserDTO, @Param('id') id: string) {
     return this.userService.update(data, id);
   }
 
+  @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth('access_token')
   @Put('/:id/password')
   async changePassword(@Body() data: UpdateUserDTO, @Param('id') id: string) {
     return this.userService.update(data, id);

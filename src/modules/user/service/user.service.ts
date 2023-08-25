@@ -1,7 +1,7 @@
 import { Injectable, HttpStatus } from '@nestjs/common';
 import { PrismaService } from '~/prisma';
 import { CreateUserDTO, UpdateUserDTO, UpdatePasswordUserDTO } from '~/user/dto';
-import { DATE_TIME, PASSWORD, PHONE, ResponseFailure, ResponseSuccess, SHA256 } from '@/utils';
+import { DATE_TIME, PHONE, ResponseFailure, ResponseSuccess, BCRYPT } from '@/utils';
 
 @Injectable()
 export class UserService {
@@ -52,42 +52,25 @@ export class UserService {
           statusCode: HttpStatus.CONFLICT,
         });
       }
-      if (!PASSWORD.check(data.password)) {
-        return ResponseFailure({
-          error: 'ERROR_PASSWORD_USER_UNSAFE',
-          statusCode: HttpStatus.CONFLICT,
-        });
-      }
+
       if (!DATE_TIME.check(data.birthday)) {
         return ResponseFailure({
           error: 'ERROR_IS_NOT_DATE_TIME',
           statusCode: HttpStatus.CONFLICT,
         });
       }
+
       if (!PHONE.check(data.phone)) {
         return ResponseFailure({
           error: 'ERROR_IS_NOT_PHONE_NUMBER',
           statusCode: HttpStatus.CONFLICT,
         });
       }
-      // return ResponseSuccess({
-      //   data: await this.prisma.user.create({
-      //     data: {
-      //       userName: data.userName,
-      //       password: SHA256.hash(data.password),
-      //       name: data.name,
-      //       gender: data.gender,
-      //       birthday: DATE_TIME.format(data.birthday),
-      //       job: data.job,
-      //       phone: data.phone,
-      //     },
-      //   }),
-      //   message: 'CREATE_USER_SUCCESS',
-      // });
+
       return await this.prisma.user.create({
         data: {
           userName: data.userName,
-          password: SHA256.hash(data.password),
+          password: BCRYPT.hash(data.password),
           name: data.name,
           gender: data.gender,
           birthday: DATE_TIME.format(data.birthday),
@@ -138,16 +121,9 @@ export class UserService {
         });
       }
 
-      if (SHA256.verify(data.password, user.password)) {
+      if (BCRYPT.verify({ password: data.password, hash: user.password })) {
         return ResponseFailure({
           error: 'ERROR_PASSWORD_USER_INCORRECT',
-          statusCode: HttpStatus.BAD_REQUEST,
-        });
-      }
-
-      if (!PASSWORD.check(user.password)) {
-        return ResponseFailure({
-          error: 'ERROR_PASSWORD_USER_UNSAFE',
           statusCode: HttpStatus.BAD_REQUEST,
         });
       }
@@ -160,7 +136,7 @@ export class UserService {
       }
 
       return ResponseSuccess({
-        data: await this.prisma.user.update({ where: { id }, data: { password: SHA256.hash(data.newPassword) } }),
+        data: await this.prisma.user.update({ where: { id }, data: { password: BCRYPT.hash(data.newPassword) } }),
         message: 'CHANGE_PASSWORD_USER_SUCCESS',
       });
     } catch (error) {
