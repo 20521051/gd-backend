@@ -2,7 +2,7 @@ import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from '../service';
 import { CreateUserDTO } from '~/user';
 import { AuthDTO } from '../dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { GetCurrentUser, GetCurrentUserId } from '@/decorators';
 import { RefreshTokenGuard } from '../guard';
 
@@ -27,6 +27,7 @@ export class AuthController {
   }
 
   @UseGuards(RefreshTokenGuard)
+  @ApiBearerAuth('refresh_token')
   @Post('/refresh-token')
   refreshTokens(@GetCurrentUserId() userId: string, @GetCurrentUser('refreshToken') refreshToken: string) {
     return this.authService.refreshTokens(userId, refreshToken);

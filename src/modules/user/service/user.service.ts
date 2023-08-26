@@ -121,7 +121,7 @@ export class UserService {
         });
       }
 
-      if (BCRYPT.verify({ password: data.password, hash: user.password })) {
+      if (BCRYPT.verify({ input: data.password, hash: user.password })) {
         return ResponseFailure({
           error: 'ERROR_PASSWORD_USER_INCORRECT',
           statusCode: HttpStatus.BAD_REQUEST,

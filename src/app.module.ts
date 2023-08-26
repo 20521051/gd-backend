@@ -2,8 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule, PrismaModule, UserModule } from '@/modules';
 import { AppController } from '@/app.controller';
-import { APP_GUARD } from '@nestjs/core';
-import { AccessTokenGuard } from '~/auth/guard';
 
 @Module({
   imports: [
@@ -11,16 +9,11 @@ import { AccessTokenGuard } from '~/auth/guard';
       isGlobal: true,
       envFilePath: `.env`,
     }),
-    UserModule,
     AuthModule,
+    UserModule,
     PrismaModule,
   ],
   controllers: [AppController],
-  providers: [
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: AccessTokenGuard,
-    // },
-  ],
+  providers: [],
 })
 export class AppModule {}

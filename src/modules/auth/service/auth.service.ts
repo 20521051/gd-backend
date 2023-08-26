@@ -74,7 +74,7 @@ export class AuthService {
           statusCode: HttpStatus.BAD_REQUEST,
         });
       }
-      if (!user.refreshToken || !(user.refreshToken === BCRYPT.hash(refreshToken))) {
+      if (!user.refreshToken || !BCRYPT.verify({ input: user.refreshToken, hash: refreshToken })) {
         return ResponseFailure({
           error: 'ERROR_ACCESS_DENIED',
           statusCode: HttpStatus.BAD_REQUEST,
@@ -133,9 +133,16 @@ export class AuthService {
         });
       }
 
-      if (!BCRYPT.verify({ password: dto.password, hash: user[index].password })) {
+      if (!BCRYPT.verify({ input: dto.password, hash: user[index].password })) {
         return ResponseFailure({
           error: 'ERROR_PASSWORD_USER_INCORRECT',
+          statusCode: HttpStatus.BAD_REQUEST,
+        });
+      }
+      // đã có nơi đăng nhập nhưng chưa logout
+      if (!user[index].refreshToken) {
+        return ResponseFailure({
+          error: 'ERROR_ACCESS_DENIED',
           statusCode: HttpStatus.BAD_REQUEST,
         });
       }
@@ -172,18 +179,19 @@ export class AuthService {
           statusCode: HttpStatus.BAD_REQUEST,
         });
       }
+      // đã logout rồi nên bị lỗi
       if (!user.refreshToken) {
         return ResponseFailure({
-          error: 'ERROR_ACCESS_DENIED',
+          error: 'ERROR_LOGOUT_NONE',
           statusCode: HttpStatus.BAD_REQUEST,
         });
       }
-      await this.prisma.user.updateMany({
+      await this.prisma.user.update({
         where: {
           id: userId,
         },
         data: {
-          refreshToken: null,
+          refreshToken: '',
         },
       });
       return ResponseSuccess({
