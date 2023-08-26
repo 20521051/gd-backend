@@ -62,7 +62,7 @@ model Course {
   name           String
   owner          String
   thumbnail      String // lưu trên ipfs? cloudinary
-  index          String // lưu các mục trong khóa học
+  section          String // lưu các mục trong khóa học
   rate           Float
   price          Int
   numberOfFollow Int      @default(0)
@@ -84,10 +84,11 @@ model Comment {
   updatedAt DateTime @updatedAt
 }
 
-model Index {
-  id    String   @id @default(auto()) @map("_id") @db.ObjectId
-  title String
-  video String[]
+model Section {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  video       String[]
+  description String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

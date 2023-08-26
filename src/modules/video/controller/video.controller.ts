@@ -4,7 +4,7 @@ import { VideoService } from '../service';
 import { UpdateVideoDTO, VideoDTO } from '../dto';
 
 @ApiTags('Video')
-@Controller('Video')
+@Controller('video')
 export class VideoController {
   constructor(private readonly videoService: VideoService) {}
 
@@ -13,13 +13,13 @@ export class VideoController {
     return this.videoService.create(dto);
   }
 
-  @Put('/:id')
-  update(@Param('id') id: string, @Body() dto: UpdateVideoDTO) {
-    return this.videoService.update(id, dto);
+  @Put('/:videoId')
+  update(@Param('videoId') videoId: string, @Body() dto: UpdateVideoDTO) {
+    return this.videoService.update(videoId, dto);
   }
 
-  @Delete('/:name')
-  delete(@Param('name') name: string) {
-    return this.videoService.delete(name);
+  @Delete('/:videoId')
+  delete(@Param('videoId') videoId: string) {
+    return this.videoService.delete(videoId);
   }
 }
