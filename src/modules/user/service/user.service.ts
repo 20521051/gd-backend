@@ -43,9 +43,9 @@ export class UserService {
       });
     }
   }
-  async create(data: CreateUserDTO) {
+  async create(dto: CreateUserDTO) {
     try {
-      const user = await this.prisma.user.findUnique({ where: { userName: data.userName } });
+      const user = await this.prisma.user.findUnique({ where: { userName: dto.userName } });
       if (user) {
         return ResponseFailure({
           error: 'ERROR_USER_ALREADY_EXIST',
@@ -53,14 +53,14 @@ export class UserService {
         });
       }
 
-      if (!DATE_TIME.check(data.birthday)) {
+      if (!DATE_TIME.check(dto.birthday)) {
         return ResponseFailure({
           error: 'ERROR_IS_NOT_DATE_TIME',
           statusCode: HttpStatus.CONFLICT,
         });
       }
 
-      if (!PHONE.check(data.phone)) {
+      if (!PHONE.check(dto.phone)) {
         return ResponseFailure({
           error: 'ERROR_IS_NOT_PHONE_NUMBER',
           statusCode: HttpStatus.CONFLICT,
@@ -69,13 +69,13 @@ export class UserService {
 
       return await this.prisma.user.create({
         data: {
-          userName: data.userName,
-          password: BCRYPT.hash(data.password),
-          name: data.name,
-          gender: data.gender,
-          birthday: DATE_TIME.format(data.birthday),
-          job: data.job,
-          phone: data.phone,
+          userName: dto.userName,
+          password: BCRYPT.hash(dto.password),
+          name: dto.name,
+          gender: dto.gender,
+          birthday: DATE_TIME.format(dto.birthday),
+          job: dto.job,
+          phone: dto.phone,
         },
       });
     } catch (error) {
@@ -87,7 +87,7 @@ export class UserService {
     }
   }
 
-  async update(data: UpdateUserDTO, id: string) {
+  async update(dto: UpdateUserDTO, id: string) {
     try {
       const user = await this.prisma.user.findUnique({ where: { id } });
       if (!user) {
@@ -98,7 +98,7 @@ export class UserService {
       }
 
       return ResponseSuccess({
-        data: await this.prisma.user.update({ where: { id }, data: data }),
+        data: await this.prisma.user.update({ where: { id }, data: dto }),
         message: 'UPDATE_USER_SUCCESS',
       });
     } catch (error) {
@@ -110,7 +110,7 @@ export class UserService {
     }
   }
 
-  async changePass(data: UpdatePasswordUserDTO, id: string) {
+  async changePass(dto: UpdatePasswordUserDTO, id: string) {
     try {
       const user = await this.prisma.user.findUnique({ where: { id } });
 
@@ -121,14 +121,14 @@ export class UserService {
         });
       }
 
-      if (BCRYPT.verify({ password: data.password, hash: user.password })) {
+      if (BCRYPT.verify({ input: dto.password, hash: user.password })) {
         return ResponseFailure({
           error: 'ERROR_PASSWORD_USER_INCORRECT',
           statusCode: HttpStatus.BAD_REQUEST,
         });
       }
 
-      if (data.conformNewPassword !== data.password) {
+      if (dto.conformNewPassword !== dto.password) {
         return ResponseFailure({
           error: 'ERROR_PASSWORD_USER_NOT_MATCH',
           statusCode: HttpStatus.BAD_REQUEST,
@@ -136,7 +136,7 @@ export class UserService {
       }
 
       return ResponseSuccess({
-        data: await this.prisma.user.update({ where: { id }, data: { password: BCRYPT.hash(data.newPassword) } }),
+        data: await this.prisma.user.update({ where: { id }, data: { password: BCRYPT.hash(dto.newPassword) } }),
         message: 'CHANGE_PASSWORD_USER_SUCCESS',
       });
     } catch (error) {

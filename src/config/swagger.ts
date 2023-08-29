@@ -11,7 +11,7 @@ export const SwaggerConfig = (app: INestApplication) => {
     .setVersion('1.0')
     .addBearerAuth(
       {
-        description: `[just text field] Please enter token in following format: Bearer <JWT>`,
+        description: `Please enter access token below:`,
         name: 'Authorization',
         bearerFormat: 'Bearer',
         scheme: 'Bearer',
@@ -19,6 +19,17 @@ export const SwaggerConfig = (app: INestApplication) => {
         in: 'Header',
       },
       'access_token',
+    )
+    .addBearerAuth(
+      {
+        description: `Please enter refresh token below:`,
+        name: 'Authorization',
+        bearerFormat: 'Bearer',
+        scheme: 'Bearer',
+        type: 'http',
+        in: 'Header',
+      },
+      'refresh_token',
     )
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);

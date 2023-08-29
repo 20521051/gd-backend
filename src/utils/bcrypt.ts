@@ -1,11 +1,10 @@
 import * as bcrypt from 'bcrypt';
-import * as random from './random';
 
-export const hash = (password: string): string => {
-  const saltRounds = random.generateRandomNumber(8, 12);
-  return bcrypt.hashSync(password, saltRounds);
+const saltRounds = 10;
+export const hash = (input: string): string => {
+  return bcrypt.hashSync(input, saltRounds);
 };
 
-export const verify = (property: { password: string; hash: string }) => {
-  return bcrypt.compare(property.password, property.hash);
+export const verify = async (property: { input: string; hash: string }): Promise<boolean> => {
+  return await bcrypt.compare(property.input, property.hash);
 };

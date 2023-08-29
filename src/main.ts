@@ -10,7 +10,7 @@ async function bootstrap() {
   const config = app.get(ConfigService);
   app.enableCors();
 
-  app.setGlobalPrefix('api/v1');
+  app.setGlobalPrefix('v1/api');
 
   SwaggerConfig(app);
 
