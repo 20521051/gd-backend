@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { CloudinaryProvider } from './cloudinary.provider';
-import { CloudinaryService } from './cloudinary.service';
+import { CloudinaryProvider } from './provider/cloudinary.provider';
+import { CloudinaryService } from './service/cloudinary.service';
 
 @Module({
   providers: [CloudinaryService, CloudinaryProvider],
