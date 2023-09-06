@@ -1,8 +1,17 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AuthModule, CategoryModule, PrismaModule, UserModule, VideoModule } from '@/modules';
+import {
+  AuthModule,
+  AwsModule,
+  CategoryModule,
+  CloudinaryModule,
+  PrismaModule,
+  UserModule,
+  VideoModule,
+  HeliaModule,
+  CourseModule,
+} from '@/modules';
 import { AppController } from '@/app.controller';
-import { AwsModule } from './modules/aws';
 
 @Module({
   imports: [
@@ -16,6 +25,9 @@ import { AwsModule } from './modules/aws';
     CategoryModule,
     VideoModule,
     AwsModule,
+    HeliaModule,
+    CloudinaryModule,
+    CourseModule,
   ],
   controllers: [AppController],
   providers: [],
