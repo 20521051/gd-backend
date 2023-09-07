@@ -8,3 +8,4 @@ export * from './aws';
 export * from './cloudinary';
 export * from './Helia';
 export * from './course';
+export * from './comment';

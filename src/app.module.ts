@@ -10,6 +10,7 @@ import {
   VideoModule,
   HeliaModule,
   CourseModule,
+  CommentModule,
 } from '@/modules';
 import { AppController } from '@/app.controller';
 
@@ -25,9 +26,10 @@ import { AppController } from '@/app.controller';
     CategoryModule,
     VideoModule,
     AwsModule,
-    HeliaModule,
+    // HeliaModule,
     CloudinaryModule,
     CourseModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [],
