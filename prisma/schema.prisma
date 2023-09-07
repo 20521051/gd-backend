@@ -27,6 +27,7 @@ enum modelTypes {
   course
   video
   blog
+  comment
 }
 
 enum Gender {
@@ -36,22 +37,24 @@ enum Gender {
 }
 
 model User {
-  id             String  @id @default(auto()) @map("_id") @db.ObjectId
-  userName       String  @unique
-  password       String
-  email          String? @unique
-  name           String
-  gender         Gender
-  birthday       String? @default("01/01/2000")
-  job            Job
-  degree         Degree?
-  avatar         String? //lưu trên ipfs? cloudinary
-  wallet         String? @unique
-  address        String?
-  phone          String  @unique
-  bank           String?
-  numberOfFollow Int     @default(0)
-  refreshToken   String  @default("")
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userName          String  @unique
+  password          String
+  email             String? @unique
+  name              String
+  gender            Gender
+  birthday          String? @default("01/01/2000")
+  job               Job
+  degree            Degree?
+  avatar            String? //lưu trên ipfs? cloudinary
+  wallet            String? @unique
+  address           String?
+  phone             String  @unique
+  bank              String?
+  numberOfFollow    Int     @default(0)
+  refreshToken      String  @default("")
+  banTimes          Int     @default(0)
+  passwordIncorrect Int     @default(0) // max1 =5, max2=10,max3=15 -> ban
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -73,15 +76,28 @@ model Course {
 }
 
 model Comment {
+  // Nested Comments - Nested set model
   id        String     @id @default(auto()) @map("_id") @db.ObjectId
   owner     String
   content   String
+  image     String[]
   about     modelTypes
   isHelpful Boolean    @default(true)
   at        String // address that comment point to
+  parent    String
+  like      Int        @default(0)
+  unlike    Int        @default(0)
+  left      Int
+  right     Int
+  isDeleted Boolean    @default(false)
+  undo      Int        @default(0)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  // logic: comment có thể có nhiều commment con
+  // để tính số comment con lấy (right - left - 1)/2
+  // nếu about là "comment" thì đó là comment con
+  // lúc đó at sẽ lưu id của comment cha cấp cao nhất
 }
 
 model Section {
@@ -153,11 +169,11 @@ model Notification {
 }
 
 model FileEntity {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  url       String
-  key       String
-  
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  name String
+  url  String
+  key  String
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
