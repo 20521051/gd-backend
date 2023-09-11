@@ -12,6 +12,7 @@ import {
   CourseModule,
   CommentModule,
   SectionModule,
+  ExerciseModule,
 } from '@/modules';
 import { AppController } from '@/app.controller';
 
@@ -32,6 +33,7 @@ import { AppController } from '@/app.controller';
     CourseModule,
     CommentModule,
     SectionModule,
+    ExerciseModule,
   ],
   controllers: [AppController],
   providers: [],
