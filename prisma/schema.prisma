@@ -100,6 +100,15 @@ model Comment {
   // lúc đó at sẽ lưu id của comment cha cấp cao nhất
 }
 
+model Like {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String
+  commentId String
+  isLike    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Section {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   title       String
@@ -145,7 +154,7 @@ model Blog {
 
 model Exercise {
   id          String  @id @default(auto()) @map("_id") @db.ObjectId
-  title       String?
+  title       String
   description String
   file        String // link to file
   for         String // address that exercise point to
