@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { modelTypes } from '@prisma/client';
-import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CommentDTO {
   @ApiProperty({
@@ -20,7 +20,7 @@ export class CommentDTO {
   @ApiProperty({
     type: Array,
   })
-  @IsString()
+  @IsArray()
   image: string[];
 
   @ApiProperty({

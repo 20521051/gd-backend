@@ -6,30 +6,30 @@ import { UpdateSectionDTO, SectionDTO, UpdateVideoSectionDTO } from '../dto';
 @ApiTags('Section')
 @Controller('section')
 export class SectionController {
-  constructor(private readonly indexService: SectionService) {}
+  constructor(private readonly sectionService: SectionService) {}
 
   @Post()
   create(@Body() dto: SectionDTO) {
-    return this.indexService.create(dto);
+    return this.sectionService.create(dto);
   }
 
-  @Put('/:indexId')
-  update(@Param('indexId') indexId: string, @Body() dto: UpdateSectionDTO) {
-    return this.indexService.update(indexId, dto);
+  @Put('/:id')
+  update(@Param('id') id: string, @Body() dto: UpdateSectionDTO) {
+    return this.sectionService.update(id, dto);
   }
 
-  @Delete('/:indexId')
-  delete(@Param('indexId') indexId: string) {
-    return this.indexService.delete(indexId);
+  @Delete('/:id')
+  delete(@Param('id') id: string) {
+    return this.sectionService.delete(id);
   }
 
-  @Put('/:indexId/insert')
-  insertVideo(@Param('indexId') indexId: string, @Body() dto: UpdateVideoSectionDTO) {
-    return this.indexService.insertVideo(indexId, dto);
+  @Put('/:id/insert')
+  insertVideo(@Param('id') id: string, @Body() dto: UpdateVideoSectionDTO) {
+    return this.sectionService.insertVideo(id, dto);
   }
 
-  @Put('/:indexId/remove')
-  removeVideo(@Param('indexId') indexId: string, @Body() dto: UpdateVideoSectionDTO) {
-    return this.indexService.removeVideo(indexId, dto);
+  @Put('/:id/remove')
+  removeVideo(@Param('id') id: string, @Body() dto: UpdateVideoSectionDTO) {
+    return this.sectionService.removeVideo(id, dto);
   }
 }

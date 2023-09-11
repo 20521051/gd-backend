@@ -1,5 +1,5 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsArray, IsOptional, IsString } from 'class-validator';
 
 export class UpdateCommentDTO {
   @ApiPropertyOptional({
@@ -9,10 +9,9 @@ export class UpdateCommentDTO {
   @IsOptional()
   content: string;
 
-  @ApiPropertyOptional({
-    type: String,
+  @ApiProperty({
+    type: Array,
   })
-  @IsString()
-  @IsOptional()
-  image: string;
+  @IsArray()
+  image: string[];
 }

@@ -14,7 +14,7 @@ export class VideoService {
           title: dto.title,
         },
       });
-      video.forEach((element) => {
+      video.map((element) => {
         if (BCRYPT.verify({ input: dto.link, hash: element.link })) {
           return ResponseFailure({
             error: 'VIDEO_ALREADY_EXISTS',

@@ -14,7 +14,7 @@ export class SectionService {
           title: dto.title,
         },
       });
-      index.forEach((element) => {
+      index.map((element) => {
         if (dto.title === element.title) {
           return ResponseFailure({
             error: 'ERROR_INDEX_ALREADY_EXISTS',

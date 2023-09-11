@@ -13,13 +13,13 @@ export class CourseController {
     return this.courseService.create(dto);
   }
 
-  @Put('/:courseId')
-  update(@Param('courseId') courseId: string, @Body() dto: UpdateCourseDTO) {
-    return this.courseService.update(courseId, dto);
+  @Put('/:id')
+  update(@Param('id') id: string, @Body() dto: UpdateCourseDTO) {
+    return this.courseService.update(id, dto);
   }
 
-  @Delete('/:courseId')
-  delete(@Param('courseId') courseId: string) {
-    return this.courseService.delete(courseId);
+  @Delete('/:id')
+  delete(@Param('id') id: string) {
+    return this.courseService.delete(id);
   }
 }

@@ -13,13 +13,13 @@ export class VideoController {
     return this.videoService.create(dto);
   }
 
-  @Put('/:videoId')
-  update(@Param('videoId') videoId: string, @Body() dto: UpdateVideoDTO) {
-    return this.videoService.update(videoId, dto);
+  @Put('/:id')
+  update(@Param('id') id: string, @Body() dto: UpdateVideoDTO) {
+    return this.videoService.update(id, dto);
   }
 
-  @Delete('/:videoId')
-  delete(@Param('videoId') videoId: string) {
-    return this.videoService.delete(videoId);
+  @Delete('/:id')
+  delete(@Param('id') id: string) {
+    return this.videoService.delete(id);
   }
 }

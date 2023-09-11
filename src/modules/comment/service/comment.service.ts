@@ -127,11 +127,14 @@ export class CommentService {
         });
       }
       return ResponseSuccess({
-        data: await this.prisma.course.update({
+        data: await this.prisma.comment.update({
           where: {
             id: id,
           },
-          data: dto,
+          data: {
+            content: dto.content,
+            image: dto.image,
+          },
         }),
         message: 'UPDATE_COMMENT_SUCCESS',
       });

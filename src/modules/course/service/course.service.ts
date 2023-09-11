@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '~/prisma';
-import { ResponseFailure, ResponseSuccess, BCRYPT } from '@/utils';
+import { ResponseFailure, ResponseSuccess } from '@/utils';
 import { CourseDTO } from '../dto';
 import { UpdateCourseDTO } from '../dto/update-course.dto';
 
