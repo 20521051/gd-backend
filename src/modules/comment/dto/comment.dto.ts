@@ -24,7 +24,7 @@ export class CommentDTO {
   image: string[];
 
   @ApiProperty({
-    type: modelTypes,
+    type: String,
   })
   @IsNotEmpty()
   about: modelTypes;

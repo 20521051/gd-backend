@@ -42,7 +42,7 @@ async function bootstrap() {
   const PORT = config.get<string>('PORT');
   await app.listen(PORT);
 
-  console.log(`[⚡Server] Server is running on: ${SWAGGER_API_SERVER}/api/v1`);
+  console.log(`[⚡Server] Server is running on: ${SWAGGER_API_SERVER}/v1/api`);
   console.log(`[⚡Server] Swagger is running on: ${SWAGGER_API_SERVER}/swagger`);
 }
 bootstrap();
