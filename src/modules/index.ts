@@ -10,3 +10,4 @@ export * from './Helia';
 export * from './course';
 export * from './comment';
 export * from './exercise';
+export * from './like';

@@ -13,6 +13,7 @@ import {
   CommentModule,
   SectionModule,
   ExerciseModule,
+  LikeModule,
 } from '@/modules';
 import { AppController } from '@/app.controller';
 
@@ -34,6 +35,7 @@ import { AppController } from '@/app.controller';
     CommentModule,
     SectionModule,
     ExerciseModule,
+    LikeModule,
   ],
   controllers: [AppController],
   providers: [],
