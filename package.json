@@ -42,6 +42,7 @@
     "crypto": "^1.0.1",
     "ethers": "^6.7.1",
     "helia": "^2.0.1",
+    "kafkajs": "^2.2.4",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "prisma": "^5.1.0",
