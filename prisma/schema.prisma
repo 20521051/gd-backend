@@ -96,8 +96,9 @@ model Comment {
 
   // logic: comment có thể có nhiều commment con
   // để tính số comment con lấy (right - left - 1)/2
-  // nếu about là "comment" thì đó là comment con
-  // lúc đó at sẽ lưu id của comment cha cấp cao nhất
+  // nếu parent == null thì nó là comment gốc
+  // at sẽ lưu id của comment cha cấp cao nhất
+  // isHelpful là tỉ lệ giữa dislike và like
 }
 
 model Like {

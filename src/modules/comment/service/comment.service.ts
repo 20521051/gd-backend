@@ -1,11 +1,12 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '~/prisma';
-import { ResponseFailure, ResponseSuccess, BCRYPT } from '@/utils';
+import { ResponseFailure, ResponseSuccess } from '@/utils';
 import { CommentDTO } from '../dto';
 import { UpdateCommentDTO } from '../dto/update-comment.dto';
 /* 
   key futures: Comment service
   + create comment
+    insert Comment on right
   + update comment
   + delete comment
   + get comment
@@ -17,6 +18,17 @@ export class CommentService {
 
   async create(dto: CommentDTO) {
     try {
+      const owner = await this.prisma.user.findUnique({
+        where: {
+          id: dto.owner,
+        },
+      });
+      if (!owner) {
+        return ResponseFailure({
+          error: 'ERROR_OWNER_NOT_FOUND',
+          statusCode: HttpStatus.BAD_REQUEST,
+        });
+      }
       if (!dto.parent) {
         return ResponseSuccess({
           data: await this.prisma.comment.create({
@@ -34,38 +46,53 @@ export class CommentService {
           message: 'CREATE_COMMENT_SUCCESS',
         });
       }
-      const comment = await this.prisma.comment.findUnique({
+      const commentParent = await this.prisma.comment.findUnique({
         where: {
           id: dto.parent,
         },
       });
-      if (!comment) {
+      if (!commentParent) {
         return ResponseFailure({
-          error: 'ERROR_COMMENT_NOT_FOUND',
+          error: 'ERROR_COMMENT_PARENT_NOT_FOUND',
           statusCode: HttpStatus.BAD_REQUEST,
         });
       }
-      if (!comment.parent) {
-        await this.prisma.comment.updateMany({
+      if (!commentParent.parent) {
+        await this.prisma.comment.update({
           where: {
-            at: dto.at,
+            id: commentParent.id,
           },
           data: {
-            right: comment.right + 2,
+            right: commentParent.right + 2,
           },
+        });
+        return ResponseSuccess({
+          data: await this.prisma.comment.create({
+            data: {
+              owner: dto.owner,
+              content: dto.content,
+              image: dto.image,
+              about: dto.about,
+              at: dto.at,
+              parent: dto.parent,
+              left: commentParent.right,
+              right: commentParent.right + 1,
+            },
+          }),
+          message: 'CREATE_COMMENT_SUCCESS',
         });
       } else {
         const comments = await this.prisma.comment.findMany({
           where: {
             at: dto.at,
             right: {
-              gte: comment.right,
+              gte: commentParent.right,
             },
           },
         });
         await Promise.all(
           comments.map(async (item) => {
-            if (item.left > comment.right) {
+            if (item.left > commentParent.right) {
               await this.prisma.comment.update({
                 where: {
                   id: item.id,
@@ -98,8 +125,8 @@ export class CommentService {
             about: dto.about,
             at: dto.at,
             parent: null,
-            left: comment.right,
-            right: comment.right + 1,
+            left: commentParent.right,
+            right: commentParent.right + 1,
           },
         }),
         message: 'CREATE_COMMENT_SUCCESS',
