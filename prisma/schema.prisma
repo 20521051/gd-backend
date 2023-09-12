@@ -174,8 +174,6 @@ model Notification {
   link      String // link of content
 
   createdAt DateTime @default(now())
-
-  @@unique([from, to, content]) // No accept spam
 }
 
 model FileEntity {
