@@ -9,6 +9,39 @@
 $ yarn
 ```
 
+## Docker
+
+Build
+
+```bash
+$  docker build -t gd-backend .
+```
+
+Run
+
+```bash
+$ docker run -dp 127.0.0.1:5000:5000 gd-backend
+```
+
+Stop and remove container
+```bash
+$ docker stop <the-container-id>
+$ docker rm <the-container-id>
+```
+
+List your containers
+
+```bash
+$ docker ps
+```
+
+Repository
+
+```bash
+$ docker tag local-image:tagname new-repo:tagname
+
+$ docker push new-repo:tagname
+```
 ## Prisma
 
 Written our schema
