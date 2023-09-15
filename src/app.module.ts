@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import {
   AuthModule,
   AwsModule,
@@ -17,6 +17,7 @@ import {
   NotificationModule,
 } from '@/modules';
 import { AppController } from '@/app.controller';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
@@ -24,6 +25,23 @@ import { AppController } from '@/app.controller';
       isGlobal: true,
       envFilePath: `.env`,
     }),
+    ClientsModule.registerAsync([
+      {
+        name: 'RABBITMQ_SERVICE',
+        imports: [ConfigModule],
+        useFactory: (config: ConfigService) => ({
+          transport: Transport.RMQ,
+          options: {
+            urls: [`${config.get('RABBITMQ_URL')}`],
+            queue: `${config.get('RABBITMQ_QUEUE')}`,
+            queueOptions: {
+              durable: false,
+            },
+          },
+        }),
+        inject: [ConfigService],
+      },
+    ]),
     PrismaModule,
     AuthModule,
     UserModule,

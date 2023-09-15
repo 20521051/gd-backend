@@ -4,6 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from '@/app.module';
 import { SwaggerConfig } from '@/config/swagger';
 import * as bodyParser from 'body-parser';
+import { Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,15 +14,16 @@ async function bootstrap() {
   app.setGlobalPrefix('v1/api');
 
   SwaggerConfig(app);
+  app.connectMicroservice({
+    transport: Transport.RMQ,
+    options: {
+      urls: [`${config.get('RABBITMQ_URL')}`],
+      queue: `${config.get('RABBITMQ_QUEUE')}`,
+      queueOptions: { durable: false },
+      prefetchCount: 1,
+    },
+  });
 
-  //verify request came from facebook
-  // app.use(
-  //   bodyParser.json({
-  //     verify: verifyRequestSignature,
-  //   }),
-  // );
-
-  // Process application/x-www-form-urlencoded
   app.use(
     bodyParser.urlencoded({
       extended: false,
@@ -38,11 +40,13 @@ async function bootstrap() {
     }),
   );
 
-  const SWAGGER_API_SERVER = config.get<string>('SWAGGER_API_SERVER');
+  const SERVER_URL = config.get<string>('SERVER_URL');
   const PORT = config.get<string>('PORT');
+  await app.startAllMicroservices();
   await app.listen(PORT);
 
-  console.log(`[⚡Server] Server is running on: ${SWAGGER_API_SERVER}/v1/api`);
-  console.log(`[⚡Server] Swagger is running on: ${SWAGGER_API_SERVER}/swagger`);
+  console.log(`[⚡Server] Server is running on: ${SERVER_URL}/v1/api`);
+  console.log(`[⚡Swagger] Swagger is running on: ${SERVER_URL}/swagger`);
+  console.log(`[⚡RabbitMQ] RabbitMQ is running on: ${config.get('RABBITMQ_URL')}`);
 }
 bootstrap();
