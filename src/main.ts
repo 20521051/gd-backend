@@ -14,15 +14,15 @@ async function bootstrap() {
   app.setGlobalPrefix('v1/api');
 
   SwaggerConfig(app);
-  app.connectMicroservice({
-    transport: Transport.RMQ,
-    options: {
-      urls: [`${config.get('RABBITMQ_URL')}`],
-      queue: `${config.get('RABBITMQ_QUEUE')}`,
-      queueOptions: { durable: false },
-      prefetchCount: 1,
-    },
-  });
+  // app.connectMicroservice({
+  //   transport: Transport.RMQ,
+  //   options: {
+  //     urls: [`${config.get('RABBITMQ_URL')}`],
+  //     queue: `${config.get('RABBITMQ_QUEUE')}`,
+  //     queueOptions: { durable: false },
+  //     prefetchCount: 1,
+  //   },
+  // });
 
   app.use(
     bodyParser.urlencoded({
